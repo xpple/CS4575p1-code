@@ -1,0 +1,17 @@
+# Gradle
+.gradle/
+build/
+out/
+classes/
+
+# IntelliJ
+.idea/
+
+# VS Code #
+.vscode/
+
+# Mac OS #
+.DS_Store
+
+# Results
+results.csv

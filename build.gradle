@@ -1,0 +1,45 @@
+plugins {
+    id 'java'
+}
+
+group = project.maven_group
+version = project.app_version
+
+base {
+    archivesName = project.archives_base_name
+}
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    includedLibrary
+    implementation.extendsFrom includedLibrary
+}
+
+dependencies {
+    includedLibrary "com.google.guava:guava:${project.guava_version}"
+
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    manifest {
+        attributes(
+            'Main-Class': 'nl.tudelft.cs4575p1.Main'
+        )
+    }
+
+    from(configurations.includedLibrary.collect { it.isDirectory() ? it : zipTree(it) }) {
+        include '**'
+    }
+}
