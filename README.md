@@ -4,6 +4,8 @@ Code for CS4575 Sustainable Software Engineering Project 1.
 
 ## How to build
 
+To measure the energy consumption, first build the program:
+
 ```shell
 ./gradlew clean build
 ```
@@ -12,8 +14,22 @@ The JAR will be in the `build/libs` folder.
 
 ## How to measure
 
-Ensure you have built `energibridge` and have added its directory to PATH. Then, run the following in PowerShell:
+Ensure you have built `energibridge` and have added its directory to PATH. To run the various programs, see the available parameters:
+
+| Program                 | Arguments                    |
+|-------------------------|------------------------------|
+| `SINGLE_THREADED`       | `<input size>`               |
+| `MULTI_THREADED`        | `<input size> <num threads>` |
+| `MULTI_THREADED_CACHED` | `<input size> <num threads>` |
+
+Then, run the following:
 
 ```shell
-Start-Process cmd -ArgumentList "/k cd /d `"$PWD`" && energibridge -o results.csv --summary -- java -jar ./build/libs/cs4575p1-1.0.0.jar 1000000" -Verb RunAs
+scripts/program_measurement.ps1 <program> <arguments>
+```
+
+For example:
+
+```shell
+scripts/program_measurement.ps1 SINGLE_THREADED 100
 ```

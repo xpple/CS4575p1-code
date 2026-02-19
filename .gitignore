@@ -14,4 +14,4 @@ classes/
 .DS_Store
 
 # Results
-results.csv
+results_*.csv
