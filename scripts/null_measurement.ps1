@@ -2,13 +2,22 @@ $IsAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIden
 
 if (-not $IsAdmin) {
     $ScriptPath = $MyInvocation.MyCommand.Definition
-    $Arguments = @("-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "`"$ScriptPath`"")
+    $Arguments = @("-NoExit", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "`"$ScriptPath`"", "-OriginalDir", "`"$PWD`"")
 
     if ($args.Count -gt 0) {
         $Arguments += $args
     }
 
     Start-Process powershell -ArgumentList $Arguments -Verb RunAs
+    exit
+}
+
+if ($args[0] -eq "-OriginalDir") {
+    Set-Location $args[1]
+    # Remove arguments
+    $args = $args[2..($args.Count - 1)]
+} else {
+    echo "Expected '-OriginalDir' parameter"
     exit
 }
 
