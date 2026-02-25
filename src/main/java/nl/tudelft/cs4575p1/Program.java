@@ -1,11 +1,7 @@
 package nl.tudelft.cs4575p1;
 
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.KeySpec;
-import java.util.Random;
+import com.google.common.hash.HashFunction;
+import com.google.common.hash.Hashing;
 
 public sealed interface Program permits
     SingleThreadedProgram,
@@ -14,29 +10,18 @@ public sealed interface Program permits
 
     void run() throws Exception;
 
-    static byte[] task(int value) {
-        try {
-            KeySpec spec = new PBEKeySpec(Integer.toHexString(value).toCharArray(), Task.SALT, 100_000, 256);
-            SecretKey key = Task.KEY_FACTORY.generateSecret(spec);
-            return key.getEncoded();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+    static long task(int value) {
+        long sink = 0;
+        for (int i = 0; i < Task.INTERNAL_ITERATION_COUNT; i++) {
+            sink ^= Task.HASH_FUNCTION.hashInt(value + i).asLong();
         }
+        return sink;
     }
 }
 
 class Task {
-    static final SecretKeyFactory KEY_FACTORY;
+    // is thread-safe, so does not need to be thread-local
+    static final HashFunction HASH_FUNCTION = Hashing.sha512();
 
-    static final byte[] SALT = new byte[16];
-
-    static {
-        try {
-            KEY_FACTORY = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-
-        new Random(0L).nextBytes(SALT);
-    }
+    static final int INTERNAL_ITERATION_COUNT = 1_000_000;
 }
