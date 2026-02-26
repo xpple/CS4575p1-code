@@ -25,8 +25,23 @@ if ($args[0] -eq "-OriginalDir") {
 
 $iterations = 30
 
+$pauseSeconds = 15
+if ($env:MEASUREMENT_PAUSE_SECONDS) {
+    $parsed = 0
+    if ([int]::TryParse($env:MEASUREMENT_PAUSE_SECONDS, [ref]$parsed)) {
+        $pauseSeconds = $parsed
+    }
+}
+if ($pauseSeconds -gt 30) { $pauseSeconds = 30 }
+if ($pauseSeconds -lt 0) { $pauseSeconds = 0 }
+
 echo "Performing $iterations iterations with args '$args'..."
+if ($pauseSeconds -gt 0) {
+    echo "Using $pauseSeconds second pause before and after each run."
+}
 
 for ($i = 1; $i -le $iterations; $i++) {
+    if ($pauseSeconds -gt 0) { Start-Sleep -Seconds $pauseSeconds }
     energibridge -o results_$i.csv --summary -- java -jar ./build/libs/cs4575p1-1.0.0.jar $args
+    if ($pauseSeconds -gt 0) { Start-Sleep -Seconds $pauseSeconds }
 }

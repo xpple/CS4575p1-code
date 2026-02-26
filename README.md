@@ -28,6 +28,13 @@ Then, run the following:
 scripts/program_measurement.ps1 <program> <arguments>
 ```
 
+By default, each iteration includes a pause before and after the run to allow for a cold start. You can adjust the pause (capped at 30 seconds) with `MEASUREMENT_PAUSE_SECONDS`.
+
+```shell
+$env:MEASUREMENT_PAUSE_SECONDS=15
+scripts/program_measurement.ps1 SINGLE_THREADED 100
+```
+
 For example:
 
 ```shell
