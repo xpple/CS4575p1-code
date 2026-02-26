@@ -54,7 +54,7 @@ class Database:
         ax.boxplot(Watt_data, positions=[1], tick_labels=['Null measurements'], label=f'mean: {round(np.mean(Watt_data),3)} W')
         ax.violinplot(Watt_data, positions=[1], showextrema=False)
         
-        ax.legend()
+        ax.legend(loc='upper right')
         ax.set_ylabel('Power consumption [Watt]')
         ax.set_title('Power measurements null setting')
     
@@ -68,7 +68,7 @@ class Database:
             ax.boxplot(thread_data, positions=[i], tick_labels=[thread_amount], label=f'{thread_amount} threads: {round(np.mean(thread_data),1)} J')
             ax.violinplot(thread_data, positions=[i], showextrema=False)
         
-        ax.legend(title='Mean consumption')
+        ax.legend(title='Mean consumption', loc='upper right')
         ax.set_ylabel('Energy consumption [J]')
         ax.set_xlabel('Number of threads')
         ax.set_title('Energy measurements varying thread amount')
@@ -83,7 +83,7 @@ class Database:
             ax.boxplot(thread_data, positions=[i], tick_labels=[thread_amount], label=f'{thread_amount} threads: {round(np.mean(thread_data),1)} Watt')
             ax.violinplot(thread_data, positions=[i], showextrema=False)
         
-        ax.legend(title='Mean consumption')
+        ax.legend(title='Mean consumption', loc='upper left')
         ax.set_ylabel('Power consumption [Watt]')
         ax.set_xlabel('Number of threads')
         ax.set_title('Power measurements varying thread amount')
@@ -100,7 +100,7 @@ def main():
     print("Testing if collected data follows normal distribution with Shapiro")
     for folder in [null_folder] + thread_folders:
         if folder == null_folder:
-            folder_data = [m.total_J - m.total_t*null_watts for m in analysis.null_measurements]
+            folder_data = [m.avg_W for m in analysis.null_measurements]
         else:
             folder_data = [m.total_J - m.total_t*null_watts for m in analysis.measurements[folder]]
         _, shapiro_p = sp.stats.shapiro(folder_data)
@@ -109,7 +109,8 @@ def main():
         else:
             print(f'{folder}: Data is NOT normal \np_value = {round(shapiro_p,5)}\n')
 
-    fig, ax = plt.subplots(1,3, figsize=(12,4))
+    fig, ax = plt.subplots(1,3, figsize=(14,4))
+    plt.subplots_adjust(left=0.075, right=0.95, bottom=0.15, top=0.9, wspace=0.25)
 
     analysis.plot_null(ax[0])
     analysis.plot_threads_joule(ax[1])
